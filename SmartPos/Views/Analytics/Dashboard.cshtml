@@ -7,15 +7,35 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
-<div id="totalSales" style="height:400px; width:500px"></div>
+<h2 style="text-align:center">Trends in sales</h2>
 
+<div class="container" style="margin-top:50px">
+    <div class="row">
+        <div class="col-lg-5 panel panel-default">
+            <div id="totalSales" style="height:100%; width:100%"></div>
+        </div>
+
+        <div class="col-lg-5 col-lg-push-2 panel panel-default">
+            <div id="totalSales1" style="height:100%; width: 100%"></div>
+
+        </div>
+
+    </div>
+</div>
 <script>
-    $.getJSON("GetData/", function (result) {
+    $.getJSON("GetSalesData/", function (result) {
         console.log(result["data"]);
-         Highcharts.chart('totalSales', getChartOptions(result));
+        Highcharts.chart('totalSales', getSalesChartOptions(result));
+        Highcharts.chart('totalSales1', getSalesChartOptions1(result));
+
+        Highcharts.chart('totalSalesPieChart', getSalesPieChartOptions(result));
     });
 
-    function getChartOptions(result) {
+    $.getJSON("GetProdctQty/", function (result) {
+
+    });
+
+    function getSalesChartOptions(result) {
         var options = {
             chart: {
                 type: 'line'
@@ -92,6 +112,228 @@
             ]
         }
         return options;
+        function getSalesChartOptions(result) {
+            var options = {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Total sales'
+                },
+                subtitle: {
+                    text: 'Showing trends of last 7 days'
+                },
+                xAxis: {
+                    title: {
+                        text: 'Date'
+                    },
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    tickInterval: 24 * 60 * 60 * 1000 //interval of one day (js deals in milliseconds)
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Sales (Rupees)',
+                        align: 'high'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    }
+                },
+                tooltip: {
+                    //headerFormat: '<b>{series.name}</b>',
+                    valueSuffix: ' rupees'
+                },
+                plotOptions: {
+                    column: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center'
+                    //verticalAlign: 'middle'
+                },
+                //legend: {
+                //    layout: 'vertical',
+                //    align: 'right',
+                //    verticalAlign: 'top',
+                //    x: -40,
+                //    y: 80,
+                //    floating: true,
+                //    borderWidth: 1,
+                //    backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                //    shadow: true
+                //},
+                credits: {
+                    enabled: false
+                },
+                series: [
+                    {
+                        name: 'Total sales per day',
+                        data: JSON.parse("[" + result["data"] + "]")[0] //the whole sring would be parsed into an array and array sent from server will be at index 0
+                        //data: [
+                        //    [Date.UTC(2017, 8, 3), 140],
+                        //    [Date.UTC(2017, 8, 4), 1000],
+                        //    [Date.UTC(2017, 8, 5), 2140]
+                        //]
+                        //data: [[1501545600000.0, 123344.0], [1501632000000.0, 1233.0], [1501718400000.0, 123.0], [1501804800000.0, 1344.0], [1501891200000.0, 3344.0]]
+
+                    }
+                ]
+            }
+            return options;
+        }
     }
+    function getSalesChartOptions1(result) {
+        var options = {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Total sales'
+            },
+            subtitle: {
+                text: 'Showing trends of last 7 days'
+            },
+            xAxis: {
+                title: {
+                    text: 'Date'
+                },
+                type: 'datetime',
+                dateTimeLabelFormats: { // don't display the dummy year
+                    month: '%e. %b',
+                    year: '%b'
+                },
+                tickInterval: 24 * 60 * 60 * 1000 //interval of one day (js deals in milliseconds)
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Sales (Rupees)',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                //headerFormat: '<b>{series.name}</b>',
+                valueSuffix: ' rupees'
+            },
+            plotOptions: {
+                //column: {
+                //    dataLabels: {
+                //        enabled: true
+                //    }
+                //},
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            legend: {
+                layout: 'horizontal',
+                align: 'center'
+                //verticalAlign: 'middle'
+            },
+            //legend: {
+            //    layout: 'vertical',
+            //    align: 'right',
+            //    verticalAlign: 'top',
+            //    x: -40,
+            //    y: 80,
+            //    floating: true,
+            //    borderWidth: 1,
+            //    backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+            //    shadow: true
+            //},
+            credits: {
+                enabled: false
+            },
+            series: [
+                {
+                    name: 'Total sales per day',
+                    data: JSON.parse("[" + result["data"] + "]")[0] //the whole sring would be parsed into an array and array sent from server will be at index 0
+                    //data: [
+                    //    [Date.UTC(2017, 8, 3), 140],
+                    //    [Date.UTC(2017, 8, 4), 1000],
+                    //    [Date.UTC(2017, 8, 5), 2140]
+                    //]
+                    //data: [[1501545600000.0, 123344.0], [1501632000000.0, 1233.0], [1501718400000.0, 123.0], [1501804800000.0, 1344.0], [1501891200000.0, 3344.0]]
+
+                }
+            ]
+        }
+        return options;
+    }
+
+    function getSalesPieChartOptions(result) {
+        var dataFeed = JSON.parse("[" + result["data"] + "]")[0];
+        var options = {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Pie representation'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [{
+                    name: dataFeed[0][1],
+                    y: dataFeed[0][0]
+                }, {
+                    name: dataFeed[1][1],
+                    y: dataFeed[1][0],
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: dataFeed[2][1],
+                    y: dataFeed[2][0]
+                }, {
+                    name: dataFeed[3][1],
+                    y: dataFeed[3][0]
+                }, {
+                    name: dataFeed[4][1],
+                    y: dataFeed[4][0]
+                }, {
+                    name: dataFeed[5][1],
+                    y: dataFeed[5][0]
+                }, {
+                    name: dataFeed[6][1],
+                    y: dataFeed[6][0]
+                }]
+            }]
+
+        }
+        return options;
+    }
+
+</script>
+
+<script>
+
 </script>
 

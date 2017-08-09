@@ -18,7 +18,7 @@ namespace SmartPos.Controllers
             return View();
         }
 
-        public JsonResult GetData()
+        public JsonResult GetSalesData()
         {
             List<List<double>> totalSales = new List<List<double>>();
             
@@ -41,12 +41,30 @@ namespace SmartPos.Controllers
             var json = JsonConvert.SerializeObject(totalSales);
             return Json(new { data = json }, JsonRequestBehavior.AllowGet);
         }
-    }
 
-    public class sale
-    {
-        public DateTime Date { set; get; }
-        public float Sale { set; get; }
+        public JsonResult GetProductQtys()
+        {
+            using(var session = NHibernateSessionHelper.OpenSession())
+            {
+                var queryToGetQtys = @"select Product.Description, quantities.Qty
+from Product
+join
+(select stockins.ProductId, (stockins.StockedIn - stockouts.StockedOut) as Qty
+from
+(select s.Pid as 'ProductId', sum(s.StockedIn) as 'StockedIn' 
+from StockIn s 
+group by s.Pid) stockins
+ join
+(select o.Pid as 'ProductId', sum(o.StockedOut) as 'StockedOut' 
+from StockOut o 
+group by o.Pid) stockouts
+on stockins.ProductId = stockouts.ProductId) quantities
+on Product.Pid = quantities.ProductId";
+                session.CreateSQLQuery(queryToGetQtys);
+
+                return null;
+            }
+        }
     }
 
     
