@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+@*You need to add a reference to jQuery prior to referencing the highcharts javascript file*@
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="totalSales" style="height:400px; width:500px"></div>
+
+<script>
+    $.getJSON("GetData/", function (result) {
+        console.log(result["data"]);
+         Highcharts.chart('totalSales', getChartOptions(result));
+    });
+
+    function getChartOptions(result) {
+        var options = {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Total sales'
+            },
+            subtitle: {
+                text: 'Showing trends of last 7 days'
+            },
+            xAxis: {
+                title: {
+                    text: 'Date'
+                },
+                type: 'datetime',
+                dateTimeLabelFormats: { // don't display the dummy year
+                    month: '%e. %b',
+                    year: '%b'
+                },
+                tickInterval: 24 * 60 * 60 * 1000 //interval of one day (js deals in milliseconds)
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Sales (Rupees)',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                //headerFormat: '<b>{series.name}</b>',
+                valueSuffix: ' rupees'
+            },
+            plotOptions: {
+                column: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            legend:{
+                layout: 'horizontal',
+                align: 'center'
+                //verticalAlign: 'middle'
+            },
+            //legend: {
+            //    layout: 'vertical',
+            //    align: 'right',
+            //    verticalAlign: 'top',
+            //    x: -40,
+            //    y: 80,
+            //    floating: true,
+            //    borderWidth: 1,
+            //    backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+            //    shadow: true
+            //},
+            credits: {
+                enabled: false
+            },
+            series: [
+                {
+                    name: 'Total sales per day',
+                    data: JSON.parse("[" + result["data"] + "]")[0] //the whole sring would be parsed into an array and array sent from server will be at index 0
+                    //data: [
+                    //    [Date.UTC(2017, 8, 3), 140],
+                    //    [Date.UTC(2017, 8, 4), 1000],
+                    //    [Date.UTC(2017, 8, 5), 2140]
+                    //]
+                    //data: [[1501545600000.0, 123344.0], [1501632000000.0, 1233.0], [1501718400000.0, 123.0], [1501804800000.0, 1344.0], [1501891200000.0, 3344.0]]
+
+                }
+            ]
+        }
+        return options;
+    }
+</script>
+
