@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" auto-import="true" assembly="SmartPos" namespace="SmartPos.Models">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
+                   auto-import="true" 
+                   assembly="SmartPos" 
+                   namespace="SmartPos.Models">
   
   <!--SALESITEM-->
   <class name="SalesItem" table="SalesItem" dynamic-update="true" >
@@ -81,5 +84,20 @@
     <property name="Date" />
     <property name="Price"/>
   </class>
+  
+  <!--MAPPING FOR spGetProductWithDetails-->
+  <sql-query name="uspGetProductWithDetails" callable="true">
+    <!--<query-param name="companyId" type="int"/>
+    <query-param name="startDate" type="DateTime"/>
+    <query-param name="endDate" type="DateTime"/>-->
+    <return class="Product">
+      <return-property column="Sn" name="Sn" />
+      <return-property column="Pid" name="Pid" />
+      <return-property column="Description" name="Description" />
+      <return-property column="Price" name="Price" />
+      <return-property column="Qty" name="Qty" />
+    </return>
+    exec [dbo].[uspGetProductWithDetails]
+  </sql-query>
 
 </hibernate-mapping>

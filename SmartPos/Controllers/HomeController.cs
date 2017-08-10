@@ -90,6 +90,8 @@ o.Pid) stockouts on stockins.ProductId = stockouts.ProductId
 ) stocks on 
 product.Pid = stocks.ProductId
 ";
+                var querySp = session.GetNamedQuery("uspGetProductWithDetails");
+                List<Product> res = new List<Product>(querySp.List<Product>());
 
                 //var query1 = (session.CreateSQLQuery(sqlQuery).SetResultTransformer(Transformers.AliasToBean<Product>()));
                 var query2 = session.CreateSQLQuery(sqlQuery1).SetResultTransformer(Transformers.AliasToBean<Product>());
@@ -100,7 +102,7 @@ product.Pid = stocks.ProductId
                 //List < Product > products = query.ToList<Product>();
                 //return View(products.AsQueryable<Product>());
 
-                return View(products.AsQueryable<Product>());
+                return View(res.AsQueryable<Product>());
             }
         }
 
